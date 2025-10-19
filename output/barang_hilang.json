@@ -1,0 +1,262 @@
+{
+  "classes": [
+    {
+      "name": "User",
+      "attributes": [
+        {
+          "name": "id",
+          "type": "String"
+        },
+        {
+          "name": "name",
+          "type": "String"
+        },
+        {
+          "name": "email",
+          "type": "String"
+        },
+        {
+          "name": "password",
+          "type": "String"
+        },
+        {
+          "name": "phone",
+          "type": "String"
+        },
+        {
+          "name": "role",
+          "type": "String"
+        }
+      ],
+      "methods": [
+        {
+          "name": "login",
+          "parameters": [],
+          "returnType": "Boolean"
+        },
+        {
+          "name": "reportLostItem",
+          "parameters": [],
+          "returnType": "Report"
+        },
+        {
+          "name": "viewMyReports",
+          "parameters": [],
+          "returnType": "List<Report>"
+        }
+      ]
+    },
+    {
+      "name": "Admin",
+      "attributes": [],
+      "methods": [
+        {
+          "name": "verifyReport",
+          "parameters": [],
+          "returnType": "Boolean"
+        },
+        {
+          "name": "publishReport",
+          "parameters": [],
+          "returnType": "Boolean"
+        },
+        {
+          "name": "deleteReport",
+          "parameters": [],
+          "returnType": "Boolean"
+        }
+      ]
+    },
+    {
+      "name": "Report",
+      "attributes": [
+        {
+          "name": "id",
+          "type": "String"
+        },
+        {
+          "name": "reporter",
+          "type": "User"
+        },
+        {
+          "name": "item",
+          "type": "Item"
+        },
+        {
+          "name": "reportDate",
+          "type": "Date"
+        },
+        {
+          "name": "description",
+          "type": "String"
+        },
+        {
+          "name": "status",
+          "type": "ReportStatus"
+        }
+      ],
+      "methods": [
+        {
+          "name": "updateStatus",
+          "parameters": [],
+          "returnType": "void"
+        }
+      ]
+    },
+    {
+      "name": "Item",
+      "attributes": [
+        {
+          "name": "id",
+          "type": "String"
+        },
+        {
+          "name": "name",
+          "type": "String"
+        },
+        {
+          "name": "category",
+          "type": "String"
+        },
+        {
+          "name": "locationFound",
+          "type": "String"
+        },
+        {
+          "name": "description",
+          "type": "String"
+        },
+        {
+          "name": "status",
+          "type": "ItemStatus"
+        }
+      ],
+      "methods": [
+        {
+          "name": "markAsClaimed",
+          "parameters": [],
+          "returnType": "Boolean"
+        }
+      ]
+    },
+    {
+      "name": "Notification",
+      "attributes": [
+        {
+          "name": "id",
+          "type": "String"
+        },
+        {
+          "name": "user",
+          "type": "User"
+        },
+        {
+          "name": "message",
+          "type": "String"
+        },
+        {
+          "name": "createdAt",
+          "type": "Date"
+        },
+        {
+          "name": "isRead",
+          "type": "Boolean"
+        }
+      ],
+      "methods": [
+        {
+          "name": "markAsRead",
+          "parameters": [],
+          "returnType": "void"
+        }
+      ]
+    },
+    {
+      "name": "History",
+      "attributes": [
+        {
+          "name": "id",
+          "type": "String"
+        },
+        {
+          "name": "report",
+          "type": "Report"
+        },
+        {
+          "name": "action",
+          "type": "String"
+        },
+        {
+          "name": "performedBy",
+          "type": "String"
+        },
+        {
+          "name": "note",
+          "type": "String"
+        },
+        {
+          "name": "createdAt",
+          "type": "Date"
+        }
+      ],
+      "methods": []
+    },
+    {
+      "name": "Claim",
+      "attributes": [
+        {
+          "name": "id",
+          "type": "String"
+        },
+        {
+          "name": "report",
+          "type": "Report"
+        },
+        {
+          "name": "claimant",
+          "type": "User"
+        },
+        {
+          "name": "claimDate",
+          "type": "Date"
+        },
+        {
+          "name": "status",
+          "type": "String"
+        }
+      ],
+      "methods": [
+        {
+          "name": "approveClaim",
+          "parameters": [],
+          "returnType": "Boolean"
+        },
+        {
+          "name": "rejectClaim",
+          "parameters": [],
+          "returnType": "Boolean"
+        }
+      ]
+    }
+  ],
+  "enums": [
+    {
+      "name": "ReportStatus",
+      "values": [
+        "MENUNGGU_VERIFIKASI",
+        "DIVERIFIKASI",
+        "DIPUBLIKASIKAN",
+        "SELESAI"
+      ]
+    },
+    {
+      "name": "ItemStatus",
+      "values": [
+        "HILANG",
+        "DITEMUKAN",
+        "DIAMBIL"
+      ]
+    }
+  ],
+  "project": "barang_hilang"
+}
