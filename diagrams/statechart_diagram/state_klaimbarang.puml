@@ -1,0 +1,54 @@
+@startuml
+title Klaim Barang Statechart
+
+[*] --> Draft
+
+Draft --> Diajukan : User submit klaim
+Draft --> Dibatalkan : User batalkan
+
+Diajukan --> DalamReview : Petugas mulai review
+Diajukan --> Dibatalkan : User batalkan
+
+DalamReview --> MenungguVerifikasiTambahan : Bukti kurang lengkap
+DalamReview --> Disetujui : Verifikasi berhasil
+DalamReview --> Ditolak : Verifikasi gagal
+
+MenungguVerifikasiTambahan --> DalamReview : User upload bukti tambahan
+MenungguVerifikasiTambahan --> Dibatalkan : Tidak lengkapi dalam batas waktu
+
+Disetujui --> Selesai : Barang diambil
+
+Selesai --> [*]
+Ditolak --> [*]
+Dibatalkan --> [*]
+
+note right of Draft
+  Klaim sedang dibuat
+end note
+
+note right of Diajukan
+  Klaim menunggu
+  review petugas
+end note
+
+note right of DalamReview
+  Petugas memeriksa
+  bukti kepemilikan
+end note
+
+note right of MenungguVerifikasiTambahan
+  Memerlukan bukti
+  tambahan
+end note
+
+note right of Disetujui
+  Klaim disetujui,
+  barang siap diambil
+end note
+
+note right of Selesai
+  Barang sudah diambil
+  oleh pemilik
+end note
+
+@enduml

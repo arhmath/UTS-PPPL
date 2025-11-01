@@ -1,0 +1,126 @@
+@startuml
+title Class Diagram Utama - Sistem Penemuan Barang Hilang UIN Sunan Kalijaga
+
+' User Management
+class User {
+  -userID: String
+  -nama: String
+  -email: String
+  -password: String
+  -role: String
+  -NIM_NIP: String
+  +login()
+  +logout()
+  +updateProfile()
+}
+
+class AuthSession {
+  -sessionID: String
+  -userID: String
+  -token: String
+  -waktuMulai: DateTime
+  -statusSesi: String
+  +createSession()
+  +validateSession()
+}
+
+' Laporan
+class LaporanHilang {
+  -laporanHilangID: String
+  -userID: String
+  -namaBarang: String
+  -kategori: String
+  -deskripsi: String
+  -lokasiHilang: String
+  -tanggalHilang: Date
+  -statusLaporan: String
+  +buatLaporan()
+  +updateLaporan()
+}
+
+class LaporanTemuan {
+  -laporanTemuanID: String
+  -userID: String
+  -namaBarang: String
+  -kategori: String
+  -deskripsi: String
+  -lokasiTemuan: String
+  -tanggalTemuan: Date
+  -statusBarang: String
+  -lokasiPenyimpanan: String
+  +buatLaporan()
+  +simpanBarang()
+}
+
+class KlaimBarang {
+  -klaimID: String
+  -laporanTemuanID: String
+  -userID: String
+  -buktiKepemilikan: String
+  -statusKlaim: String
+  -tanggalKlaim: Date
+  +ajukanKlaim()
+  +verifikasiKlaim()
+}
+
+' Supporting Classes
+class Notifikasi {
+  -notifikasiID: String
+  -userID: String
+  -judul: String
+  -isi: String
+  -statusBaca: Boolean
+  -tanggalKirim: DateTime
+  +kirimNotifikasi()
+  +tandaiBaca()
+}
+
+class FotoBarang {
+  -fotoID: String
+  -laporanID: String
+  -urlFoto: String
+  -tanggalUpload: DateTime
+  +uploadFoto()
+  +hapusFoto()
+}
+
+' Admin & Reporting
+class LaporanStatistik {
+  -laporanStatistikID: String
+  -periode: String
+  -totalLaporanHilang: Integer
+  -totalLaporanTemuan: Integer
+  -totalTerselesaikan: Integer
+  -tanggalGenerate: DateTime
+  +generateLaporan()
+  +exportPDF()
+}
+
+class LogAktivitas {
+  -logID: String
+  -userID: String
+  -jenisAktivitas: String
+  -deskripsiAktivitas: String
+  -timestamp: DateTime
+  +catatLog()
+  +cariLog()
+}
+
+' Relationships
+User "1" -- "*" AuthSession
+User "1" -- "*" LaporanHilang
+User "1" -- "*" LaporanTemuan
+User "1" -- "*" KlaimBarang
+User "1" -- "*" Notifikasi
+User "1" -- "*" LogAktivitas
+
+LaporanHilang "1" -- "*" FotoBarang
+LaporanTemuan "1" -- "*" FotoBarang
+LaporanTemuan "1" -- "*" KlaimBarang
+
+LaporanHilang "*" -- "*" LaporanTemuan : matches >
+
+KlaimBarang "*" -- "1" LaporanStatistik
+LogAktivitas "*" -- "1" LaporanStatistik
+
+@enduml

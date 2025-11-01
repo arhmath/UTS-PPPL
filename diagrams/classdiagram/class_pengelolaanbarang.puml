@@ -1,0 +1,104 @@
+@startuml
+title Subsystem Pengelolaan Laporan
+
+class User {
+  -userID: String
+  -nama: String
+  -email: String
+}
+
+class LaporanHilang {
+  -laporanHilangID: String
+  -userID: String
+  -namaBarang: String
+  -kategori: String
+  -deskripsi: String
+  -lokasiHilang: String
+  -tanggalHilang: Date
+  -statusLaporan: String
+  +buatLaporan()
+  +updateLaporan()
+  +batalkanLaporan()
+}
+
+class LaporanTemuan {
+  -laporanTemuanID: String
+  -userID: String
+  -namaBarang: String
+  -kategori: String
+  -deskripsi: String
+  -lokasiTemuan: String
+  -tanggalTemuan: Date
+  -statusBarang: String
+  -lokasiPenyimpanan: String
+  +buatLaporan()
+  +simpanBarang()
+  +serahkanBarang()
+}
+
+class KlaimBarang {
+  -klaimID: String
+  -laporanTemuanID: String
+  -userID: String
+  -buktiKepemilikan: String
+  -statusKlaim: String
+  -tanggalKlaim: Date
+  -petugasVerifikator: String
+  +ajukanKlaim()
+  +uploadBukti()
+  +verifikasiKlaim()
+  +selesaikanKlaim()
+}
+
+class Notifikasi {
+  -notifikasiID: String
+  -userID: String
+  -jenisNotifikasi: String
+  -judul: String
+  -isi: String
+  -statusBaca: Boolean
+  +kirimNotifikasi()
+  +tandaiBaca()
+}
+
+class FotoBarang {
+  -fotoID: String
+  -laporanID: String
+  -jenisLaporan: String
+  -urlFoto: String
+  -tanggalUpload: DateTime
+  +uploadFoto()
+  +hapusFoto()
+}
+
+' Relationships
+User "1" -- "*" LaporanHilang : creates >
+User "1" -- "*" LaporanTemuan : reports >
+User "1" -- "*" KlaimBarang : submits >
+User "1" -- "*" Notifikasi : receives >
+
+LaporanHilang "1" -- "*" FotoBarang : has >
+LaporanTemuan "1" -- "*" FotoBarang : has >
+LaporanTemuan "1" -- "*" KlaimBarang : has >
+
+LaporanHilang "*" -- "*" LaporanTemuan : matches >
+
+note right of LaporanHilang
+  Status: Draft, Aktif, 
+  Dalam Proses, Terselesaikan,
+  Ditutup, Kadaluarsa
+end note
+
+note right of LaporanTemuan
+  Status: Draft, Tersimpan,
+  Menunggu Klaim, Proses Verifikasi,
+  Terselesaikan
+end note
+
+note right of KlaimBarang
+  Status: Draft, Diajukan,
+  Dalam Review, Disetujui,
+  Ditolak, Selesai, Dibatalkan
+end note
+
+@enduml

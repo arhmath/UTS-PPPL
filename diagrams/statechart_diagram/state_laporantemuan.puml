@@ -1,0 +1,47 @@
+@startuml
+title Laporan Temuan Statechart
+
+[*] --> Draft
+
+Draft --> Tersimpan : User/petugas submit
+
+Tersimpan --> MenungguKlaim : Sistem temukan kecocokan
+Tersimpan --> DiserahkanPihakBerwenang : Tidak diklaim (3 bulan, berharga)
+Tersimpan --> Dimusnahkan : Tidak diklaim (3 bulan, tidak berharga)
+
+MenungguKlaim --> ProsesVerifikasi : User ajukan klaim
+MenungguKlaim --> Tersimpan : Tidak ada klaim
+
+ProsesVerifikasi --> Terselesaikan : Klaim disetujui
+ProsesVerifikasi --> MenungguKlaim : Klaim ditolak
+
+Terselesaikan --> [*]
+DiserahkanPihakBerwenang --> [*]
+Dimusnahkan --> [*]
+
+note right of Draft
+  Laporan temuan sedang
+  dibuat
+end note
+
+note right of Tersimpan
+  Barang disimpan di
+  lost & found box
+end note
+
+note right of MenungguKlaim
+  Menunggu pemilik
+  mengajukan klaim
+end note
+
+note right of ProsesVerifikasi
+  Petugas verifikasi
+  bukti kepemilikan
+end note
+
+note right of Terselesaikan
+  Barang dikembalikan
+  ke pemilik
+end note
+
+@enduml

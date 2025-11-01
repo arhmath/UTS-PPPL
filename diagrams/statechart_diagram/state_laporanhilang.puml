@@ -1,0 +1,46 @@
+@startuml
+title Laporan Hilang Statechart
+
+[*] --> Draft
+
+Draft --> Aktif : User submit laporan
+Draft --> Ditutup : User batalkan
+
+Aktif --> DalamProses : Sistem temukan pencocokan
+Aktif --> Ditutup : User tutup manual
+Aktif --> Kadaluarsa : Melewati batas waktu
+
+DalamProses --> Terselesaikan : Verifikasi klaim berhasil
+DalamProses --> Aktif : Pencocokan tidak sesuai
+DalamProses --> Ditutup : User batalkan
+
+Terselesaikan --> [*]
+Ditutup --> [*]
+Kadaluarsa --> [*]
+
+note right of Draft
+  Laporan sedang dibuat,
+  belum disubmit
+end note
+
+note right of Aktif
+  Laporan aktif dicari
+  pencocokannya
+end note
+
+note right of DalamProses
+  Ada pencocokan potensial
+  sedang diverifikasi
+end note
+
+note right of Terselesaikan
+  Barang sudah ditemukan
+  dan diklaim
+end note
+
+note right of Kadaluarsa
+  Melewati batas waktu
+  aktif (6 bulan)
+end note
+
+@enduml

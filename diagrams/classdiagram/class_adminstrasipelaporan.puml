@@ -1,0 +1,66 @@
+@startuml
+title Subsystem Administrasi dan Pelaporan
+
+class KlaimBarang {
+  -klaimID: String
+  -statusKlaim: String
+  -tanggalKlaim: Date
+  +verifikasiKlaim()
+  +selesaikanKlaim()
+}
+
+class LaporanStatistik {
+  -laporanStatistikID: String
+  -periode: String
+  -bulan: Integer
+  -tahun: Integer
+  -totalLaporanHilang: Integer
+  -totalLaporanTemuan: Integer
+  -totalTerselesaikan: Integer
+  -tanggalGenerate: DateTime
+  +generateLaporan()
+  +exportPDF()
+  +exportExcel()
+}
+
+class LogAktivitas {
+  -logID: String
+  -userID: String
+  -jenisAktivitas: String
+  -deskripsiAktivitas: String
+  -timestamp: DateTime
+  +catatLog()
+  +cariLog()
+  +filterLog()
+}
+
+class ArsipLaporan {
+  -arsipID: String
+  -laporanID: String
+  -jenisLaporan: String
+  -statusAkhir: String
+  -tanggalArsip: Date
+  +arsipkanLaporan()
+  +cariArsip()
+}
+
+' Relationships
+KlaimBarang "*" -- "1" LaporanStatistik : summarized in >
+LogAktivitas "*" -- "1" LaporanStatistik : feeds >
+ArsipLaporan "*" -- "1" LogAktivitas : tracked by >
+
+note right of LaporanStatistik
+  Generate laporan berkala:
+  - Bulanan
+  - Semesteran
+  - Tahunan
+end note
+
+note right of LogAktivitas
+  Mencatat semua aktivitas:
+  - Create, Read, Update, Delete
+  - Login/Logout
+  - Verifikasi Klaim
+end note
+
+@enduml
