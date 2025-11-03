@@ -15,7 +15,71 @@
       "description": "Sistem untuk mengelola data pengguna dan autentikasi."
     }
   ],
-  "enumerations": [],
+  "enumerations": [
+    {
+      "name": "Klaimbarang",
+      "choices": [
+        "DalamReview",
+        "Diajukan",
+        "Dibatalkan",
+        "Disetujui",
+        "Ditolak",
+        "Draft",
+        "MenungguVerifikasiTambahan",
+        "Selesai"
+      ]
+    },
+    {
+      "name": "Laporanhilang",
+      "choices": [
+        "Aktif",
+        "DalamProses",
+        "Ditutup",
+        "Draft",
+        "Kadaluarsa",
+        "Terselesaikan"
+      ]
+    },
+    {
+      "name": "Laporantemuan",
+      "choices": [
+        "Dimusnahkan",
+        "DiserahkanPihakBerwenang",
+        "Draft",
+        "MenungguKlaim",
+        "ProsesVerifikasi",
+        "Terselesaikan",
+        "Tersimpan"
+      ]
+    },
+    {
+      "name": "Usersession",
+      "choices": [
+        "Idle",
+        "Kadaluarsa",
+        "LoggedIn",
+        "LoggedOut",
+        "LoggingIn"
+      ]
+    },
+    {
+      "name": "Role",
+      "choices": [
+        "mahasiswa",
+        "dosen",
+        "staff",
+        "petugas_keamanan"
+      ]
+    },
+    {
+      "name": "PeriodeLaporanStatistik",
+      "choices": [
+        "Bulanan",
+        "Semesteran",
+        "Tahunan"
+      ]
+    }
+  ],
   "classes": [
     {
       "domainRef": "administrasiPelaporan",
@@ -27,7 +91,8 @@
         },
         {
           "name": "statusKlaim",
-          "type": "String"
+          "type": "Enumerated",
+          "enumRef": "Klaimbarang"
         },
         {
           "name": "tanggalKlaim",
@@ -45,7 +110,8 @@
         },
         {
           "name": "periode",
-          "type": "String"
+          "type": "Enumerated",
+          "enumRef": "PeriodeLaporanStatistik"
         },
         {
           "name": "bulan",
@@ -177,7 +243,8 @@
         },
         {
           "name": "statusLaporan",
-          "type": "String"
+          "type": "Enumerated",
+          "enumRef": "Laporanhilang"
         }
       ]
     },
@@ -215,7 +282,8 @@
         },
         {
           "name": "statusBarang",
-          "type": "String"
+          "type": "Enumerated",
+          "enumRef": "Laporantemuan"
         },
         {
           "name": "lokasiPenyimpanan",
@@ -245,7 +313,8 @@
         },
         {
           "name": "statusKlaim",
-          "type": "String"
+          "type": "Enumerated",
+          "enumRef": "Klaimbarang"
         },
         {
           "name": "tanggalKlaim",
@@ -335,7 +404,8 @@
         },
         {
           "name": "role",
-          "type": "String"
+          "type": "Enumerated",
+          "enumRef": "Role"
         },
         {
           "name": "NIM_NIP",
@@ -365,7 +435,8 @@
         },
         {
           "name": "statusSesi",
-          "type": "String"
+          "type": "Enumerated",
+          "enumRef": "Usersession"
         }
       ]
     },
@@ -403,7 +474,8 @@
         },
         {
           "name": "statusLaporan",
-          "type": "String"
+          "type": "Enumerated",
+          "enumRef": "Laporanhilang"
         }
       ]
     },
@@ -441,7 +513,8 @@
         },
         {
           "name": "statusBarang",
-          "type": "String"
+          "type": "Enumerated",
+          "enumRef": "Laporantemuan"
         },
         {
           "name": "lokasiPenyimpanan",
@@ -471,7 +544,8 @@
         },
         {
           "name": "statusKlaim",
-          "type": "String"
+          "type": "Enumerated",
+          "enumRef": "Klaimbarang"
         },
         {
           "name": "tanggalKlaim",
@@ -541,7 +615,8 @@
         },
         {
           "name": "periode",
-          "type": "String"
+          "type": "Enumerated",
+          "enumRef": "PeriodeLaporanStatistik"
         },
         {
           "name": "totalLaporanHilang",

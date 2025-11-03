@@ -20,9 +20,21 @@ DOMAIN_DESCRIPTIONS = {
     "administrasiPelaporan": "Sistem untuk administrasi, statistik, dan arsip laporan."
 }
 
+# MAPPING BARU: Atribut yang harus dipetakan ke Enum
+ENUM_ATTRIBUTE_MAPPING = {
+    "statusLaporan": "Laporanhilang",
+    "statusBarang": "Laporantemuan",
+    "statusKlaim": "Klaimbarang",
+    "statusSesi": "Usersession",
+    "role": "Role", # Enum kustom
+    "periode": "PeriodeLaporanStatistik" # Enum kustom
+}
+
+
 def parse_puml(content):
     # Parse Class Diagram
     classes = re.findall(r'class\s+(\w+)\s*\{([^}]*)\}', content, re.IGNORECASE)
+    # Tetap mempertahankan parsing enum eksplisit (jika ada)
     enums = re.findall(r'enum\s+(\w+)\s*\{([^}]*)\}', content, re.IGNORECASE)
 
     class_data = []
@@ -132,23 +144,20 @@ def convert_all():
     # Dictionary untuk menyimpan semua enum (untuk cek referensi)
     all_enums = {}
 
-    # Proses setiap file .puml
+    # --- FASE 1: Proses Class Diagrams & Statecharts ---
     print("🔄 Memproses file .puml...\n")
     for file_name in sorted(os.listdir(INPUT_DIR)):
         if not file_name.endswith(".puml"):
             continue
             
         path = os.path.join(INPUT_DIR, file_name)
-        print(f"📄 Processing: {file_name}")
+        # print(f"📄 Processing: {file_name}")
         
         with open(path, 'r', encoding='utf-8') as f:
             content = f.read()
 
         data = parse_puml(content)
         domain = get_domain_from_filename(file_name)
-        
-        # Debug: tampilkan domain yang terdeteksi
-        print(f"   └─ Domain detected: {domain if domain else '❌ None'}")
         
         # Jika file adalah class diagram
         if domain and (file_name.startswith("class_") or file_name.startswith("main_")):
@@ -159,19 +168,17 @@ def convert_all():
                     "description": DOMAIN_DESCRIPTIONS.get(domain, "")
                 })
                 added_domains.add(domain)
-                print(f"   └─ ✅ Domain '{domain}' added")
+                # print(f"   └─ ✅ Domain '{domain}' added")
             
-            # Simpan enums ke dictionary (untuk cek referensi nanti)
+            # Simpan enums eksplisit ke dictionary (untuk cek referensi nanti)
             for enum in data["enums"]:
                 all_enums[enum["name"]] = enum["values"]
             
-            # Tambahkan classes dengan domainRef
-            for cls in data["classes"]:
-                print(f"   └─ ✅ Class '{cls['name']}' added ({len(cls['attributes'])} attributes)")
+            # Tambahkan classes (akan diproses ulang di FASE 2)
         
         # Jika file adalah state diagram
         elif "state" in file_name:
-            # Ekstrak nama dari file
+            # Ekstrak nama statechart (contoh: 'state_laporanhilang' -> 'Laporanhilang')
             state_name = file_name.replace("state_", "").replace(".puml", "")
             state_name = ''.join(word.capitalize() for word in state_name.split('_'))
             
@@ -181,10 +188,22 @@ def convert_all():
                 "transitions": data["transitions"],
                 "initialState": data["initialState"]
             })
-            print(f"   └─ ✅ Statechart '{state_name}' added")
+            # print(f"   └─ ✅ Statechart '{state_name}' added")
 
-    # Proses ulang untuk menambahkan enumerations dan classes dengan format yang benar
-    print("\n🔄 Memproses enumerations dan classes...\n")
+    # --- FASE 2: Membuat Enumerations dari Statecharts dan Kustom ---
+    
+    # 1. Tambahkan Enum dari Statecharts
+    for statechart in final_output["statecharts"]:
+        enum_name = statechart["name"]
+        # Hapus state transisi "[*]" jika ada
+        values = [s for s in statechart["states"] if s != "[*]"]
+        all_enums[enum_name] = values
+    
+    # 2. Tambahkan Enum Kustom (berdasarkan Notes/Logic)
+    all_enums["Role"] = ["mahasiswa", "dosen", "staff", "petugas_keamanan"]
+    all_enums["PeriodeLaporanStatistik"] = ["Bulanan", "Semesteran", "Tahunan"]
+    
+    print("\n🔄 Memproses enumerations dan classes...")
     
     # Tambahkan semua enums ke output
     for enum_name, enum_values in all_enums.items():
@@ -194,6 +213,8 @@ def convert_all():
         })
         print(f"📋 Enum '{enum_name}' added with {len(enum_values)} choices")
     
+    # --- FASE 3: Proses Kelas dengan Pemetaan Enum ---
+
     # Proses ulang file untuk menambahkan classes dengan format yang benar
     for file_name in sorted(os.listdir(INPUT_DIR)):
         if not file_name.endswith(".puml"):
@@ -228,8 +249,14 @@ def convert_all():
                     "type": attr["type"]
                 }
                 
-                # Cek apakah type adalah enum
-                if attr["type"] in all_enums:
+                # Cek apakah attribute name harus menggunakan enum (Status/Role)
+                enum_ref_name_by_name = ENUM_ATTRIBUTE_MAPPING.get(attr["name"])
+                
+                # Cek berdasarkan nama atribut atau tipe data (untuk enum eksplisit)
+                if enum_ref_name_by_name in all_enums:
+                    attr_obj["type"] = "Enumerated"
+                    attr_obj["enumRef"] = enum_ref_name_by_name
+                elif attr["type"] in all_enums:
                     attr_obj["type"] = "Enumerated"
                     attr_obj["enumRef"] = attr["type"]
                 
