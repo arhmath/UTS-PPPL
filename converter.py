@@ -3,87 +3,252 @@ import json
 import re
 
 INPUT_DIR = "diagrams"
-OUTPUT_DIR = "output"
+OUTPUT_FILE = "output/lost_found_system.json"
+
+# Mapping file ke domain
+DOMAIN_MAPPING = {
+    "main_classdiagram": "userManagement",
+    "pengelolaanbarang": "pengelolaanLaporan",
+    "adminstrasipelaporan": "administrasiPelaporan",
+    "administrasipelaporan": "administrasiPelaporan"
+}
+
+# Deskripsi domain
+DOMAIN_DESCRIPTIONS = {
+    "userManagement": "Sistem untuk mengelola data pengguna dan autentikasi.",
+    "pengelolaanLaporan": "Sistem untuk mengelola laporan barang hilang, temuan, dan klaim.",
+    "administrasiPelaporan": "Sistem untuk administrasi, statistik, dan arsip laporan."
+}
 
 def parse_puml(content):
-    classes = re.findall(r'class\s+(\w+)\s*\{([^}]*)\}', content)
-    enums = re.findall(r'enum\s+(\w+)\s*\{([^}]*)\}', content)
+    # Parse Class Diagram
+    classes = re.findall(r'class\s+(\w+)\s*\{([^}]*)\}', content, re.IGNORECASE)
+    enums = re.findall(r'enum\s+(\w+)\s*\{([^}]*)\}', content, re.IGNORECASE)
 
-    result = {
-        "classes": [],
-        "enums": []
-    }
+    class_data = []
+    enum_data = []
 
+    # Parse classes
     for cls, body in classes:
         attributes = []
-        methods = []
+        
         for line in body.splitlines():
             line = line.strip()
             if not line:
                 continue
-            # atribut
+            
+            # Parse attributes (dimulai dengan -)
             if line.startswith('-'):
                 parts = line[1:].split(':')
                 if len(parts) == 2:
-                    attributes.append({
-                        "name": parts[0].strip(),
-                        "type": parts[1].strip()
-                    })
-            # method
-            elif line.startswith('+'):
-                parts = line[1:].split('(')
-                if len(parts) >= 2:
-                    name = parts[0].strip()
-                    param_part = parts[1].split(')')[0]
-                    params = []
-                    if param_part.strip():
-                        for p in param_part.split(','):
-                            p = p.strip()
-                            if ':' in p:  # tambahkan pengecekan aman
-                                pname, ptype = p.split(':')
-                                params.append({
-                                    "name": pname.strip(),
-                                    "type": ptype.strip()
-                                })
-                    return_type = "void"
-                    if ':' in line:
-                        return_type = line.split(':')[-1].strip()
-                    methods.append({
-                        "name": name,
-                        "parameters": params,
-                        "returnType": return_type
-                    })
-        result["classes"].append({
-            "name": cls,
-            "attributes": attributes,
-            "methods": methods
+                    attr_name = parts[0].strip()
+                    attr_type = parts[1].strip()
+                    
+                    # Konversi tipe data ke format standar
+                    type_mapping = {
+                        "String": "String",
+                        "Integer": "Integer",
+                        "Boolean": "Boolean",
+                        "Date": "Date",
+                        "DateTime": "Timestamp",
+                        "Float": "Float"
+                    }
+                    
+                    # Cek apakah ID
+                    if attr_name.endswith("ID"):
+                        attr_type = "ID"
+                    else:
+                        attr_type = type_mapping.get(attr_type, attr_type)
+                    
+                    attributes.append({"name": attr_name, "type": attr_type})
+        
+        class_data.append({
+            "name": cls, 
+            "attributes": attributes
         })
 
+    # Parse enums
     for enum_name, body in enums:
         values = [v.strip() for v in body.splitlines() if v.strip()]
-        result["enums"].append({"name": enum_name, "values": values})
+        enum_data.append({"name": enum_name, "values": values})
 
-    return result
+    # Parse Statechart
+    transitions = []
+    states_set = set()
+    transition_pattern = re.compile(r'^\s*(\S+?)\s*-->\s*(\S+?)\s*(?::\s*(.*))?$', re.MULTILINE)
+    matches = transition_pattern.findall(content)
 
+    for source, target, label in matches:
+        states_set.add(source.strip())
+        states_set.add(target.strip())
+        event = label.strip() if label else None
+        transitions.append({
+            "source": source.strip(),
+            "target": target.strip(),
+            "event": event
+        })
+
+    initial_state = "[*]" if "[*]" in states_set else None
+    if initial_state:
+        states_set.discard("[*]")
+    states = sorted(list(states_set))
+    
+    return {
+        "classes": class_data,
+        "enums": enum_data,
+        "states": states,
+        "transitions": transitions,
+        "initialState": initial_state
+    }
+
+def get_domain_from_filename(filename):
+    """Dapatkan domain berdasarkan nama file"""
+    base_name = filename.replace(".puml", "").lower()
+    
+    # Cek setiap key di DOMAIN_MAPPING
+    for key, domain in DOMAIN_MAPPING.items():
+        if key in base_name:
+            return domain
+    return None
 
 def convert_all():
-    if not os.path.exists(OUTPUT_DIR):
-        os.makedirs(OUTPUT_DIR)
+    output_dir = os.path.dirname(OUTPUT_FILE)
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
 
-    for file_name in os.listdir(INPUT_DIR):
-        if file_name.endswith(".puml"):
-            path = os.path.join(INPUT_DIR, file_name)
-            with open(path, 'r', encoding='utf-8') as f:
-                content = f.read()
+    # Struktur output akhir
+    final_output = {
+        "modelName": "Lost and Found Information System",
+        "version": "1.0",
+        "domains": [],
+        "enumerations": [],
+        "classes": [],
+        "statecharts": []
+    }
 
-            data = parse_puml(content)
-            data["project"] = file_name.replace(".puml", "")
+    # Set untuk tracking domain yang sudah ditambahkan
+    added_domains = set()
+    
+    # Dictionary untuk menyimpan semua enum (untuk cek referensi)
+    all_enums = {}
 
-            output_path = os.path.join(OUTPUT_DIR, file_name.replace(".puml", ".json"))
-            with open(output_path, 'w', encoding='utf-8') as out:
-                json.dump(data, out, indent=2, ensure_ascii=False)
+    # Proses setiap file .puml
+    print("🔄 Memproses file .puml...\n")
+    for file_name in sorted(os.listdir(INPUT_DIR)):
+        if not file_name.endswith(".puml"):
+            continue
+            
+        path = os.path.join(INPUT_DIR, file_name)
+        print(f"📄 Processing: {file_name}")
+        
+        with open(path, 'r', encoding='utf-8') as f:
+            content = f.read()
 
-            print(f"✅ {file_name} berhasil dikonversi → {output_path}")
+        data = parse_puml(content)
+        domain = get_domain_from_filename(file_name)
+        
+        # Debug: tampilkan domain yang terdeteksi
+        print(f"   └─ Domain detected: {domain if domain else '❌ None'}")
+        
+        # Jika file adalah class diagram
+        if domain and (file_name.startswith("class_") or file_name.startswith("main_")):
+            # Tambah domain jika belum ada
+            if domain not in added_domains:
+                final_output["domains"].append({
+                    "name": domain,
+                    "description": DOMAIN_DESCRIPTIONS.get(domain, "")
+                })
+                added_domains.add(domain)
+                print(f"   └─ ✅ Domain '{domain}' added")
+            
+            # Simpan enums ke dictionary (untuk cek referensi nanti)
+            for enum in data["enums"]:
+                all_enums[enum["name"]] = enum["values"]
+            
+            # Tambahkan classes dengan domainRef
+            for cls in data["classes"]:
+                print(f"   └─ ✅ Class '{cls['name']}' added ({len(cls['attributes'])} attributes)")
+        
+        # Jika file adalah state diagram
+        elif "state" in file_name:
+            # Ekstrak nama dari file
+            state_name = file_name.replace("state_", "").replace(".puml", "")
+            state_name = ''.join(word.capitalize() for word in state_name.split('_'))
+            
+            final_output["statecharts"].append({
+                "name": state_name,
+                "states": data["states"],
+                "transitions": data["transitions"],
+                "initialState": data["initialState"]
+            })
+            print(f"   └─ ✅ Statechart '{state_name}' added")
+
+    # Proses ulang untuk menambahkan enumerations dan classes dengan format yang benar
+    print("\n🔄 Memproses enumerations dan classes...\n")
+    
+    # Tambahkan semua enums ke output
+    for enum_name, enum_values in all_enums.items():
+        final_output["enumerations"].append({
+            "name": enum_name,
+            "choices": enum_values
+        })
+        print(f"📋 Enum '{enum_name}' added with {len(enum_values)} choices")
+    
+    # Proses ulang file untuk menambahkan classes dengan format yang benar
+    for file_name in sorted(os.listdir(INPUT_DIR)):
+        if not file_name.endswith(".puml"):
+            continue
+        
+        if not (file_name.startswith("class_") or file_name.startswith("main_")):
+            continue
+            
+        path = os.path.join(INPUT_DIR, file_name)
+        
+        with open(path, 'r', encoding='utf-8') as f:
+            content = f.read()
+
+        data = parse_puml(content)
+        domain = get_domain_from_filename(file_name)
+        
+        if not domain:
+            continue
+        
+        # Tambahkan classes
+        for cls in data["classes"]:
+            class_obj = {
+                "domainRef": domain,
+                "className": cls["name"],
+                "attributes": []
+            }
+            
+            # Proses setiap attribute
+            for attr in cls["attributes"]:
+                attr_obj = {
+                    "name": attr["name"],
+                    "type": attr["type"]
+                }
+                
+                # Cek apakah type adalah enum
+                if attr["type"] in all_enums:
+                    attr_obj["type"] = "Enumerated"
+                    attr_obj["enumRef"] = attr["type"]
+                
+                class_obj["attributes"].append(attr_obj)
+            
+            final_output["classes"].append(class_obj)
+
+    # Simpan ke file JSON
+    with open(OUTPUT_FILE, 'w', encoding='utf-8') as out:
+        json.dump(final_output, out, indent=2, ensure_ascii=False)
+
+    print(f"\n{'='*60}")
+    print(f"✅ Konversi berhasil!")
+    print(f"📦 Total domains: {len(final_output['domains'])}")
+    print(f"📦 Total enumerations: {len(final_output['enumerations'])}")
+    print(f"📦 Total classes: {len(final_output['classes'])}")
+    print(f"📦 Total statecharts: {len(final_output['statecharts'])}")
+    print(f"💾 Output: {OUTPUT_FILE}")
+    print(f"{'='*60}")
 
 if __name__ == "__main__":
     convert_all()

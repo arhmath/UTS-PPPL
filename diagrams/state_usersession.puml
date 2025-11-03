@@ -1,0 +1,42 @@
+@startuml
+title User Session Statechart
+
+[*] --> Idle
+
+Idle --> LoggingIn : User memasukkan kredensial
+LoggingIn --> LoggedIn : Autentikasi berhasil
+LoggingIn --> Idle : Autentikasi gagal
+
+LoggedIn --> Idle : Tidak ada aktivitas
+
+Idle --> LoggedOut : User logout manual
+Idle --> Kadaluarsa : Session timeout
+
+LoggedIn --> Kadaluarsa : Session timeout saat aktif
+
+Kadaluarsa --> LoggingIn : User login kembali
+LoggedOut --> LoggingIn : User login kembali
+
+LoggedOut --> [*]
+Kadaluarsa --> [*]
+
+note right of Idle
+  Kondisi sudah login tapi
+  tidak ada aktivitas
+end note
+
+note right of LoggingIn
+  Proses autentikasi
+  sedang berlangsung
+end note
+
+note right of LoggedIn
+  User aktif dalam sistem
+end note
+
+note right of Kadaluarsa
+  Sesi berakhir karena
+  tidak ada aktivitas
+end note
+
+@enduml

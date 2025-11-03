@@ -1,0 +1,901 @@
+{
+  "modelName": "Lost and Found Information System",
+  "version": "1.0",
+  "domains": [
+    {
+      "name": "administrasiPelaporan",
+      "description": "Sistem untuk administrasi, statistik, dan arsip laporan."
+    },
+    {
+      "name": "pengelolaanLaporan",
+      "description": "Sistem untuk mengelola laporan barang hilang, temuan, dan klaim."
+    },
+    {
+      "name": "userManagement",
+      "description": "Sistem untuk mengelola data pengguna dan autentikasi."
+    }
+  ],
+  "enumerations": [],
+  "classes": [
+    {
+      "domainRef": "administrasiPelaporan",
+      "className": "KlaimBarang",
+      "attributes": [
+        {
+          "name": "klaimID",
+          "type": "ID"
+        },
+        {
+          "name": "statusKlaim",
+          "type": "String"
+        },
+        {
+          "name": "tanggalKlaim",
+          "type": "Date"
+        }
+      ]
+    },
+    {
+      "domainRef": "administrasiPelaporan",
+      "className": "LaporanStatistik",
+      "attributes": [
+        {
+          "name": "laporanStatistikID",
+          "type": "ID"
+        },
+        {
+          "name": "periode",
+          "type": "String"
+        },
+        {
+          "name": "bulan",
+          "type": "Integer"
+        },
+        {
+          "name": "tahun",
+          "type": "Integer"
+        },
+        {
+          "name": "totalLaporanHilang",
+          "type": "Integer"
+        },
+        {
+          "name": "totalLaporanTemuan",
+          "type": "Integer"
+        },
+        {
+          "name": "totalTerselesaikan",
+          "type": "Integer"
+        },
+        {
+          "name": "tanggalGenerate",
+          "type": "Timestamp"
+        }
+      ]
+    },
+    {
+      "domainRef": "administrasiPelaporan",
+      "className": "LogAktivitas",
+      "attributes": [
+        {
+          "name": "logID",
+          "type": "ID"
+        },
+        {
+          "name": "userID",
+          "type": "ID"
+        },
+        {
+          "name": "jenisAktivitas",
+          "type": "String"
+        },
+        {
+          "name": "deskripsiAktivitas",
+          "type": "String"
+        },
+        {
+          "name": "timestamp",
+          "type": "Timestamp"
+        }
+      ]
+    },
+    {
+      "domainRef": "administrasiPelaporan",
+      "className": "ArsipLaporan",
+      "attributes": [
+        {
+          "name": "arsipID",
+          "type": "ID"
+        },
+        {
+          "name": "laporanID",
+          "type": "ID"
+        },
+        {
+          "name": "jenisLaporan",
+          "type": "String"
+        },
+        {
+          "name": "statusAkhir",
+          "type": "String"
+        },
+        {
+          "name": "tanggalArsip",
+          "type": "Date"
+        }
+      ]
+    },
+    {
+      "domainRef": "pengelolaanLaporan",
+      "className": "User",
+      "attributes": [
+        {
+          "name": "userID",
+          "type": "ID"
+        },
+        {
+          "name": "nama",
+          "type": "String"
+        },
+        {
+          "name": "email",
+          "type": "String"
+        }
+      ]
+    },
+    {
+      "domainRef": "pengelolaanLaporan",
+      "className": "LaporanHilang",
+      "attributes": [
+        {
+          "name": "laporanHilangID",
+          "type": "ID"
+        },
+        {
+          "name": "userID",
+          "type": "ID"
+        },
+        {
+          "name": "namaBarang",
+          "type": "String"
+        },
+        {
+          "name": "kategori",
+          "type": "String"
+        },
+        {
+          "name": "deskripsi",
+          "type": "String"
+        },
+        {
+          "name": "lokasiHilang",
+          "type": "String"
+        },
+        {
+          "name": "tanggalHilang",
+          "type": "Date"
+        },
+        {
+          "name": "statusLaporan",
+          "type": "String"
+        }
+      ]
+    },
+    {
+      "domainRef": "pengelolaanLaporan",
+      "className": "LaporanTemuan",
+      "attributes": [
+        {
+          "name": "laporanTemuanID",
+          "type": "ID"
+        },
+        {
+          "name": "userID",
+          "type": "ID"
+        },
+        {
+          "name": "namaBarang",
+          "type": "String"
+        },
+        {
+          "name": "kategori",
+          "type": "String"
+        },
+        {
+          "name": "deskripsi",
+          "type": "String"
+        },
+        {
+          "name": "lokasiTemuan",
+          "type": "String"
+        },
+        {
+          "name": "tanggalTemuan",
+          "type": "Date"
+        },
+        {
+          "name": "statusBarang",
+          "type": "String"
+        },
+        {
+          "name": "lokasiPenyimpanan",
+          "type": "String"
+        }
+      ]
+    },
+    {
+      "domainRef": "pengelolaanLaporan",
+      "className": "KlaimBarang",
+      "attributes": [
+        {
+          "name": "klaimID",
+          "type": "ID"
+        },
+        {
+          "name": "laporanTemuanID",
+          "type": "ID"
+        },
+        {
+          "name": "userID",
+          "type": "ID"
+        },
+        {
+          "name": "buktiKepemilikan",
+          "type": "String"
+        },
+        {
+          "name": "statusKlaim",
+          "type": "String"
+        },
+        {
+          "name": "tanggalKlaim",
+          "type": "Date"
+        },
+        {
+          "name": "petugasVerifikator",
+          "type": "String"
+        }
+      ]
+    },
+    {
+      "domainRef": "pengelolaanLaporan",
+      "className": "Notifikasi",
+      "attributes": [
+        {
+          "name": "notifikasiID",
+          "type": "ID"
+        },
+        {
+          "name": "userID",
+          "type": "ID"
+        },
+        {
+          "name": "jenisNotifikasi",
+          "type": "String"
+        },
+        {
+          "name": "judul",
+          "type": "String"
+        },
+        {
+          "name": "isi",
+          "type": "String"
+        },
+        {
+          "name": "statusBaca",
+          "type": "Boolean"
+        }
+      ]
+    },
+    {
+      "domainRef": "pengelolaanLaporan",
+      "className": "FotoBarang",
+      "attributes": [
+        {
+          "name": "fotoID",
+          "type": "ID"
+        },
+        {
+          "name": "laporanID",
+          "type": "ID"
+        },
+        {
+          "name": "jenisLaporan",
+          "type": "String"
+        },
+        {
+          "name": "urlFoto",
+          "type": "String"
+        },
+        {
+          "name": "tanggalUpload",
+          "type": "Timestamp"
+        }
+      ]
+    },
+    {
+      "domainRef": "userManagement",
+      "className": "User",
+      "attributes": [
+        {
+          "name": "userID",
+          "type": "ID"
+        },
+        {
+          "name": "nama",
+          "type": "String"
+        },
+        {
+          "name": "email",
+          "type": "String"
+        },
+        {
+          "name": "password",
+          "type": "String"
+        },
+        {
+          "name": "role",
+          "type": "String"
+        },
+        {
+          "name": "NIM_NIP",
+          "type": "String"
+        }
+      ]
+    },
+    {
+      "domainRef": "userManagement",
+      "className": "AuthSession",
+      "attributes": [
+        {
+          "name": "sessionID",
+          "type": "ID"
+        },
+        {
+          "name": "userID",
+          "type": "ID"
+        },
+        {
+          "name": "token",
+          "type": "String"
+        },
+        {
+          "name": "waktuMulai",
+          "type": "Timestamp"
+        },
+        {
+          "name": "statusSesi",
+          "type": "String"
+        }
+      ]
+    },
+    {
+      "domainRef": "userManagement",
+      "className": "LaporanHilang",
+      "attributes": [
+        {
+          "name": "laporanHilangID",
+          "type": "ID"
+        },
+        {
+          "name": "userID",
+          "type": "ID"
+        },
+        {
+          "name": "namaBarang",
+          "type": "String"
+        },
+        {
+          "name": "kategori",
+          "type": "String"
+        },
+        {
+          "name": "deskripsi",
+          "type": "String"
+        },
+        {
+          "name": "lokasiHilang",
+          "type": "String"
+        },
+        {
+          "name": "tanggalHilang",
+          "type": "Date"
+        },
+        {
+          "name": "statusLaporan",
+          "type": "String"
+        }
+      ]
+    },
+    {
+      "domainRef": "userManagement",
+      "className": "LaporanTemuan",
+      "attributes": [
+        {
+          "name": "laporanTemuanID",
+          "type": "ID"
+        },
+        {
+          "name": "userID",
+          "type": "ID"
+        },
+        {
+          "name": "namaBarang",
+          "type": "String"
+        },
+        {
+          "name": "kategori",
+          "type": "String"
+        },
+        {
+          "name": "deskripsi",
+          "type": "String"
+        },
+        {
+          "name": "lokasiTemuan",
+          "type": "String"
+        },
+        {
+          "name": "tanggalTemuan",
+          "type": "Date"
+        },
+        {
+          "name": "statusBarang",
+          "type": "String"
+        },
+        {
+          "name": "lokasiPenyimpanan",
+          "type": "String"
+        }
+      ]
+    },
+    {
+      "domainRef": "userManagement",
+      "className": "KlaimBarang",
+      "attributes": [
+        {
+          "name": "klaimID",
+          "type": "ID"
+        },
+        {
+          "name": "laporanTemuanID",
+          "type": "ID"
+        },
+        {
+          "name": "userID",
+          "type": "ID"
+        },
+        {
+          "name": "buktiKepemilikan",
+          "type": "String"
+        },
+        {
+          "name": "statusKlaim",
+          "type": "String"
+        },
+        {
+          "name": "tanggalKlaim",
+          "type": "Date"
+        }
+      ]
+    },
+    {
+      "domainRef": "userManagement",
+      "className": "Notifikasi",
+      "attributes": [
+        {
+          "name": "notifikasiID",
+          "type": "ID"
+        },
+        {
+          "name": "userID",
+          "type": "ID"
+        },
+        {
+          "name": "judul",
+          "type": "String"
+        },
+        {
+          "name": "isi",
+          "type": "String"
+        },
+        {
+          "name": "statusBaca",
+          "type": "Boolean"
+        },
+        {
+          "name": "tanggalKirim",
+          "type": "Timestamp"
+        }
+      ]
+    },
+    {
+      "domainRef": "userManagement",
+      "className": "FotoBarang",
+      "attributes": [
+        {
+          "name": "fotoID",
+          "type": "ID"
+        },
+        {
+          "name": "laporanID",
+          "type": "ID"
+        },
+        {
+          "name": "urlFoto",
+          "type": "String"
+        },
+        {
+          "name": "tanggalUpload",
+          "type": "Timestamp"
+        }
+      ]
+    },
+    {
+      "domainRef": "userManagement",
+      "className": "LaporanStatistik",
+      "attributes": [
+        {
+          "name": "laporanStatistikID",
+          "type": "ID"
+        },
+        {
+          "name": "periode",
+          "type": "String"
+        },
+        {
+          "name": "totalLaporanHilang",
+          "type": "Integer"
+        },
+        {
+          "name": "totalLaporanTemuan",
+          "type": "Integer"
+        },
+        {
+          "name": "totalTerselesaikan",
+          "type": "Integer"
+        },
+        {
+          "name": "tanggalGenerate",
+          "type": "Timestamp"
+        }
+      ]
+    },
+    {
+      "domainRef": "userManagement",
+      "className": "LogAktivitas",
+      "attributes": [
+        {
+          "name": "logID",
+          "type": "ID"
+        },
+        {
+          "name": "userID",
+          "type": "ID"
+        },
+        {
+          "name": "jenisAktivitas",
+          "type": "String"
+        },
+        {
+          "name": "deskripsiAktivitas",
+          "type": "String"
+        },
+        {
+          "name": "timestamp",
+          "type": "Timestamp"
+        }
+      ]
+    }
+  ],
+  "statecharts": [
+    {
+      "name": "Klaimbarang",
+      "states": [
+        "DalamReview",
+        "Diajukan",
+        "Dibatalkan",
+        "Disetujui",
+        "Ditolak",
+        "Draft",
+        "MenungguVerifikasiTambahan",
+        "Selesai"
+      ],
+      "transitions": [
+        {
+          "source": "[*]",
+          "target": "Draft",
+          "event": null
+        },
+        {
+          "source": "Draft",
+          "target": "Diajukan",
+          "event": "User submit klaim"
+        },
+        {
+          "source": "Draft",
+          "target": "Dibatalkan",
+          "event": "User batalkan"
+        },
+        {
+          "source": "Diajukan",
+          "target": "DalamReview",
+          "event": "Petugas mulai review"
+        },
+        {
+          "source": "Diajukan",
+          "target": "Dibatalkan",
+          "event": "User batalkan"
+        },
+        {
+          "source": "DalamReview",
+          "target": "MenungguVerifikasiTambahan",
+          "event": "Bukti kurang lengkap"
+        },
+        {
+          "source": "DalamReview",
+          "target": "Disetujui",
+          "event": "Verifikasi berhasil"
+        },
+        {
+          "source": "DalamReview",
+          "target": "Ditolak",
+          "event": "Verifikasi gagal"
+        },
+        {
+          "source": "MenungguVerifikasiTambahan",
+          "target": "DalamReview",
+          "event": "User upload bukti tambahan"
+        },
+        {
+          "source": "MenungguVerifikasiTambahan",
+          "target": "Dibatalkan",
+          "event": "Tidak lengkapi dalam batas waktu"
+        },
+        {
+          "source": "Disetujui",
+          "target": "Selesai",
+          "event": "Barang diambil"
+        },
+        {
+          "source": "Selesai",
+          "target": "[*]",
+          "event": null
+        },
+        {
+          "source": "Ditolak",
+          "target": "[*]",
+          "event": null
+        },
+        {
+          "source": "Dibatalkan",
+          "target": "[*]",
+          "event": null
+        }
+      ],
+      "initialState": "[*]"
+    },
+    {
+      "name": "Laporanhilang",
+      "states": [
+        "Aktif",
+        "DalamProses",
+        "Ditutup",
+        "Draft",
+        "Kadaluarsa",
+        "Terselesaikan"
+      ],
+      "transitions": [
+        {
+          "source": "[*]",
+          "target": "Draft",
+          "event": null
+        },
+        {
+          "source": "Draft",
+          "target": "Aktif",
+          "event": "User submit laporan"
+        },
+        {
+          "source": "Draft",
+          "target": "Ditutup",
+          "event": "User batalkan"
+        },
+        {
+          "source": "Aktif",
+          "target": "DalamProses",
+          "event": "Sistem temukan pencocokan"
+        },
+        {
+          "source": "Aktif",
+          "target": "Ditutup",
+          "event": "User tutup manual"
+        },
+        {
+          "source": "Aktif",
+          "target": "Kadaluarsa",
+          "event": "Melewati batas waktu"
+        },
+        {
+          "source": "DalamProses",
+          "target": "Terselesaikan",
+          "event": "Verifikasi klaim berhasil"
+        },
+        {
+          "source": "DalamProses",
+          "target": "Aktif",
+          "event": "Pencocokan tidak sesuai"
+        },
+        {
+          "source": "DalamProses",
+          "target": "Ditutup",
+          "event": "User batalkan"
+        },
+        {
+          "source": "Terselesaikan",
+          "target": "[*]",
+          "event": null
+        },
+        {
+          "source": "Ditutup",
+          "target": "[*]",
+          "event": null
+        },
+        {
+          "source": "Kadaluarsa",
+          "target": "[*]",
+          "event": null
+        }
+      ],
+      "initialState": "[*]"
+    },
+    {
+      "name": "Laporantemuan",
+      "states": [
+        "Dimusnahkan",
+        "DiserahkanPihakBerwenang",
+        "Draft",
+        "MenungguKlaim",
+        "ProsesVerifikasi",
+        "Terselesaikan",
+        "Tersimpan"
+      ],
+      "transitions": [
+        {
+          "source": "[*]",
+          "target": "Draft",
+          "event": null
+        },
+        {
+          "source": "Draft",
+          "target": "Tersimpan",
+          "event": "User/petugas submit"
+        },
+        {
+          "source": "Tersimpan",
+          "target": "MenungguKlaim",
+          "event": "Sistem temukan kecocokan"
+        },
+        {
+          "source": "Tersimpan",
+          "target": "DiserahkanPihakBerwenang",
+          "event": "Tidak diklaim (3 bulan, berharga)"
+        },
+        {
+          "source": "Tersimpan",
+          "target": "Dimusnahkan",
+          "event": "Tidak diklaim (3 bulan, tidak berharga)"
+        },
+        {
+          "source": "MenungguKlaim",
+          "target": "ProsesVerifikasi",
+          "event": "User ajukan klaim"
+        },
+        {
+          "source": "MenungguKlaim",
+          "target": "Tersimpan",
+          "event": "Tidak ada klaim"
+        },
+        {
+          "source": "ProsesVerifikasi",
+          "target": "Terselesaikan",
+          "event": "Klaim disetujui"
+        },
+        {
+          "source": "ProsesVerifikasi",
+          "target": "MenungguKlaim",
+          "event": "Klaim ditolak"
+        },
+        {
+          "source": "Terselesaikan",
+          "target": "[*]",
+          "event": null
+        },
+        {
+          "source": "DiserahkanPihakBerwenang",
+          "target": "[*]",
+          "event": null
+        },
+        {
+          "source": "Dimusnahkan",
+          "target": "[*]",
+          "event": null
+        }
+      ],
+      "initialState": "[*]"
+    },
+    {
+      "name": "Usersession",
+      "states": [
+        "Idle",
+        "Kadaluarsa",
+        "LoggedIn",
+        "LoggedOut",
+        "LoggingIn"
+      ],
+      "transitions": [
+        {
+          "source": "[*]",
+          "target": "Idle",
+          "event": null
+        },
+        {
+          "source": "Idle",
+          "target": "LoggingIn",
+          "event": "User memasukkan kredensial"
+        },
+        {
+          "source": "LoggingIn",
+          "target": "LoggedIn",
+          "event": "Autentikasi berhasil"
+        },
+        {
+          "source": "LoggingIn",
+          "target": "Idle",
+          "event": "Autentikasi gagal"
+        },
+        {
+          "source": "LoggedIn",
+          "target": "Idle",
+          "event": "Tidak ada aktivitas"
+        },
+        {
+          "source": "Idle",
+          "target": "LoggedOut",
+          "event": "User logout manual"
+        },
+        {
+          "source": "Idle",
+          "target": "Kadaluarsa",
+          "event": "Session timeout"
+        },
+        {
+          "source": "LoggedIn",
+          "target": "Kadaluarsa",
+          "event": "Session timeout saat aktif"
+        },
+        {
+          "source": "Kadaluarsa",
+          "target": "LoggingIn",
+          "event": "User login kembali"
+        },
+        {
+          "source": "LoggedOut",
+          "target": "LoggingIn",
+          "event": "User login kembali"
+        },
+        {
+          "source": "LoggedOut",
+          "target": "[*]",
+          "event": null
+        },
+        {
+          "source": "Kadaluarsa",
+          "target": "[*]",
+          "event": null
+        }
+      ],
+      "initialState": "[*]"
+    }
+  ]
+}
